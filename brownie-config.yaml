@@ -1,0 +1,33 @@
+dependencies:
+  - OpenZeppelin/openzeppelin-contracts@4.7.2
+  - smartcontractkit/chainlink@1.9.0
+  - DennisDv24/v2-periphery@1.0.2
+compiler:
+  solc:
+    remappings:
+      - '@openzeppelin=OpenZeppelin/openzeppelin-contracts@4.7.2'
+      - '@chainlink=smartcontractkit/chainlink@1.9.0'
+      - '@uniswap=DennisDv24/v2-periphery@1.0.2'
+
+dotenv: .env
+wallets:
+  dev: ${PRIVATE_KEY}
+  test1: ${T1}
+  test2: ${T2}
+  test3: ${T3}
+  test4: ${T4}
+  test5: ${T5}
+  test6: ${T6}
+  test7: ${T7}
+  test8: ${T8}
+  test9: ${T9}
+
+networks:
+  goerli:
+    verify: True
+  mainnet:
+    verify: True
+  polygon-main:
+    verify: True
+  polygon-test:
+    verify: True
