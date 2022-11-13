@@ -7,12 +7,11 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "@uniswap/contracts/interfaces/IUniswapV2Router02.sol";
 import "@chainlink/contracts/src/v0.8/ChainlinkClient.sol";
-import "@chainlink/contracts/src/v0.8/ConfirmedOwner.sol";
 
-contract PseudoToken is 
-	ERC721Enumerable, Ownable, ChainlinkClient
-{
+contract PseudoToken is ERC721Enumerable, Ownable, ChainlinkClient {
 	
+	using Chainlink for Chainlink.Request;
+
 	uint256 public mintPrice;
 	uint256 public linkFee;
 	mapping (uint256 => string) public tokenIdToTwit;
@@ -23,6 +22,7 @@ contract PseudoToken is
 	address[] private wethLinkPath;
 
 	bytes32 private jobId;
+	mapping (bytes32 => uint256) private requestIdToTokenId;
 
 	constructor(
 		string memory tokenName,
@@ -89,14 +89,27 @@ contract PseudoToken is
 	}
 
 	function _getPinnedTwit(string memory twitterName) private {
-		// TODO
+		Chainlink.Request memory req = buildChainlinkRequest(
+			jobId, address(this), this.fulfill.selector
+		);
+		req.add('get', _getPinnedTwitEndpoint(twitterName));
+		// TODO req.add('path', ...);
+		bytes32 reqId = sendChainlinkRequest(req, linkFee);
+		requestIdToTokenId[reqId] = totalSupply();
+	}
+
+	// TODO
+	function _getPinnedTwitEndpoint(
+		string memory twitterName
+	) private returns (string memory) {
+		return "";
 	}
 
 	function fulfill(bytes32 reqId, string memory twit) 
 		public
 		recordChainlinkFulfillment(reqId)
 	{
-		// TODO
+		tokenIdToTwit[requestIdToTokenId[reqId]] = twit;
 	}
 
 }
